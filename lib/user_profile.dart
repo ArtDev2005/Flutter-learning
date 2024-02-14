@@ -54,7 +54,7 @@ class MenuRowData{
 
 class _MenuWidget extends StatelessWidget {
   final List<MenuRowData> menuRow;
-  _MenuWidget({required this.menuRow});
+  _MenuWidget({super.key, required this.menuRow});
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +71,7 @@ class _MenuWidget extends StatelessWidget {
 class _MenuWidgetRow extends StatelessWidget {
   final MenuRowData data;
   const _MenuWidgetRow({
+    super.key,
     required this.data});
 
   @override
@@ -92,7 +93,7 @@ class _MenuWidgetRow extends StatelessWidget {
 
 
 class _UserInfo extends StatelessWidget {
-  const _UserInfo();
+  const _UserInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +121,9 @@ class _UserInfo extends StatelessWidget {
 
 
 class _UserNickNameWidget extends StatelessWidget {
-  const _UserNickNameWidget();
+  const _UserNickNameWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +138,9 @@ class _UserNickNameWidget extends StatelessWidget {
 }
 
 class _UserPhoneWidget extends StatelessWidget {
-  const _UserPhoneWidget();
+  const _UserPhoneWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +155,9 @@ class _UserPhoneWidget extends StatelessWidget {
 }
 
 class _UserNameWidget extends StatelessWidget {
-  const _UserNameWidget();
+  const _UserNameWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +173,9 @@ class _UserNameWidget extends StatelessWidget {
 }
 
 class _AvatarWidget extends StatelessWidget {
-  const _AvatarWidget();
+  const _AvatarWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
