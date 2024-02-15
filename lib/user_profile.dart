@@ -70,6 +70,7 @@ class _MenuWidget extends StatelessWidget {
 
 class _MenuWidgetRow extends StatelessWidget {
   final MenuRowData data;
+
   const _MenuWidgetRow({
     super.key,
     required this.data});
@@ -90,7 +91,6 @@ class _MenuWidgetRow extends StatelessWidget {
     );
   }
 }
-
 
 class _UserInfo extends StatelessWidget {
   const _UserInfo({super.key});
