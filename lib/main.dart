@@ -1,118 +1,98 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 void main(){
-  const app = App();
-  runApp(app);
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        color: Colors.blue,
+    return MaterialApp(
+      home: Material(
         child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: CustomMultiChildLayout(
-            delegate: OwnMultiChildLayoutDelegate(),
-            children: [
-              LayoutId(
-                id: 1,
-                child: Text(
-                  "left"
-                )
-              ),
-              LayoutId(
-                  id: 2,
-                  child: Text(
-                      "middle"
-                  )
-              ),
-              LayoutId(
-                  id: 3,
-                  child: Text(
-                      "right"
-                  )
-              ),
-            ],
-          ),
-        )
+              textDirection: TextDirection.ltr,
+              child: OwnListView() // или OwnScrollView()
+        ),
       ),
     );
   }
 }
 
 
-class OwnMultiChildLayoutDelegate extends MultiChildLayoutDelegate{
+class OwnListView extends StatelessWidget {
+  const OwnListView({super.key});
 
   @override
-  Size getSize(BoxConstraints constraints){
-    return Size(constraints.biggest.width, 100);
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        separatorBuilder: (BuildContext context, int index){
+          return Container(height: 10, color: Colors.black,);
+        },
+        itemCount: 20,
+        itemBuilder: (BuildContext context, int index){
+          return Ex(text: "${index}");
+        });
+  }
+}
+
+
+
+class Ex extends StatefulWidget {
+  final String text;
+  const Ex({super.key, required this.text});
+
+  @override
+  State<Ex> createState(){
+    return _ExState();
+  }
+}
+
+class _ExState extends State<Ex> with AutomaticKeepAliveClientMixin {
+  late final TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.text);
+  }
+  @override
+  Widget build(BuildContext context) {
+    return TextField(controller: controller,);
   }
 
   @override
-  void performLayout(Size size) {
-    if (hasChild(1) & hasChild(2) & hasChild(3)){
-      final MinOtherElement = 50;
-      final firstElementMaxWidth = size.width - MinOtherElement * 2;
-      final firstElementSize = layoutChild(1, BoxConstraints.loose(Size(firstElementMaxWidth, size.height)));
+  bool get wantKeepAlive => true;
+}
 
-      final thirdElementMaxWidth = size.width - firstElementSize.width - MinOtherElement;
-      final thirdElementSize = layoutChild(2, BoxConstraints.loose(Size(thirdElementMaxWidth, size.height)));
 
-      final secondElementMaxWidth = size.width - firstElementSize.width - thirdElementSize.width;
-      final secondElementSize = layoutChild(3, BoxConstraints.loose(Size(secondElementMaxWidth, size.height)));
 
-      final firstElementYOffset = size.height / 2 - firstElementSize.height / 2;
-      final secondElementYOffset = size.height / 2 - secondElementSize.height / 2;
-      final thirdElementYOffset = size.height / 2 - thirdElementSize.height / 2;
+class OwnScrollView extends StatelessWidget {
+  OwnScrollView({super.key});
+  final controller = ScrollController(initialScrollOffset: 150);
 
-      final thirdElementXOffset = size.width - thirdElementSize.width;
-
-      var secondElementXOffset = size.width / 2 - secondElementSize.width / 2;
-
-      if (firstElementSize.width > secondElementXOffset){
-        secondElementXOffset = firstElementSize.width;
-      }
-      else if (thirdElementXOffset < secondElementXOffset + secondElementSize.width){
-        secondElementXOffset = thirdElementXOffset - secondElementSize.width;
-      }
-
-      positionChild(1, Offset(0, firstElementYOffset));
-      positionChild(2, Offset(secondElementXOffset, secondElementYOffset));
-      positionChild(3, Offset(thirdElementXOffset, thirdElementYOffset));
+  @override
+  Widget build(BuildContext context) {
+    var items = <Widget>[];
+    for (var i = 0; i < 100; i++){
+      final w = Text("$i");
+      items.add(w);
     }
-  }
-
-  @override
-  bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) {
-    return true;
-  }
-  
-}
-
-
-class OwnCustomSingleChildLayout extends SingleChildLayoutDelegate{
-  @override
-  Size getSize(BoxConstraints constraints){
-    return Size(constraints.biggest.width, 100);
-  }
-
-  @override
-  BoxConstraints getConstraintsForChild(BoxConstraints constraints){
-    return BoxConstraints.tight(Size(50, 50));
-  }
-
-  @override
-  Offset getPositionForChild(Size size, Size childSize){
-    final y_offset = size.height / 2 - childSize.height / 2;
-    return Offset(childSize.width, y_offset);
-  }
-
-  @override
-  bool shouldRelayout(covariant SingleChildLayoutDelegate oldDelegate){
-    throw true;
+    return SingleChildScrollView(
+      controller: controller,
+      scrollDirection: Axis.vertical,
+      child: Container(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: items,
+        ),
+      ),
+    );
   }
 }
+
+
+
