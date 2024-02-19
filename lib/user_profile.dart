@@ -14,6 +14,16 @@ class UserProfile extends StatelessWidget {
     MenuRowData(Icons.brush, "Оформление"),
     MenuRowData(Icons.language, "Язык"),
   ];
+
+  final List<MenuRowData> ThirdMenuRow = [
+    MenuRowData(Icons.lock_clock, "Apple Watch"),
+  ];
+
+  final List<MenuRowData> FourthMenuRow = [
+    MenuRowData(Icons.help, "Помощь"),
+    MenuRowData(Icons.question_answer, "Вопросы в Телеграм"),
+  ];
+
   UserProfile({super.key});
 
   @override
@@ -29,14 +39,17 @@ class UserProfile extends StatelessWidget {
           ),
           body:Container(
             width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: ListView(
               children: [
                 _UserInfo(),
                 SizedBox(height: 30,),
                 _MenuWidget(menuRow: FirstMenuRow),
                 SizedBox(height: 30,),
-                _MenuWidget(menuRow: SecondMenuRow)
+                _MenuWidget(menuRow: SecondMenuRow),
+                SizedBox(height: 30,),
+                _MenuWidget(menuRow: ThirdMenuRow),
+                SizedBox(height: 30,),
+                _MenuWidget(menuRow: FourthMenuRow)
               ],
             )
           )
@@ -97,24 +110,42 @@ class _UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 20,
+    return Stack(
+      children: [
+        Container(
+          color: Colors.white,
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              _AvatarWidget(),
+              SizedBox(
+                height: 10,
+              ),
+              _UserNameWidget(),
+              _UserPhoneWidget(),
+              _UserNickNameWidget(),
+              SizedBox(
+                height: 10,
+              ),
+            ],
           ),
-          _AvatarWidget(),
-          SizedBox(
-            height: 10,
+        ),
+        Positioned(
+          top: 20,
+          right: 20,
+          child: Text(
+            "Изм.",
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 17
+            ),
           ),
-          _UserNameWidget(),
-          _UserPhoneWidget(),
-          _UserNickNameWidget()
-        ],
-      ),
+        )
+      ],
     );
   }
 }
