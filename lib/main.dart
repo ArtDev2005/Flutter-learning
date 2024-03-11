@@ -1,39 +1,72 @@
-import 'dart:math';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_learning/global_key.dart';
-import 'package:flutter_learning/unique_key.dart';
 
-void main(){
-  runApp(Example());
+import 'addresses.dart';
+
+const jsonString = '''
+  [
+    {
+      "name": "Иван",
+      "surname": "Иванов",
+      "age": 17,
+      "addresses": 
+      [
+        {
+          "city": "Москва",
+          "street": "Баумана",
+          "house": "12a",
+          "flat": 12
+        }
+      ]
+    }
+  ]
+''';
+
+class Human{
+  String name;
+  String surname;
+  int age;
+  List<Address> addresses;
+
+  Human({
+    required this.name,
+    required this.surname,
+    required this.age,
+    required this.addresses,
+  });
+
+  factory Human.fromJson(Map<String, dynamic> json){
+    return Human(
+      name: json["name"] as String,
+      surname: json["surname"] as String,
+      age: json["age"] as int,
+      addresses: (json["addresses"] as List<dynamic>).map((dynamic e) => Address.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
 }
 
-class Example extends StatelessWidget {
-  final primaryColor = Color(0xFF151026);
-  Example({super.key});
+void main(){
+  const app = MyApp();
+  runApp(app);
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Inherit(
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: primaryColor,
-            title: Text("test",)
-          ),
-          body: SizedBox.expand(
-            child: Container(
-              color: Colors.red,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RedBox(),
-                  SizedBox(height: 20,),
-                  RedBox(),
-                  SizedBox(height: 20,),
-                  RedBox(),
-                ],
-              ),
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Container(
+            child: ElevatedButton(
+              child: Text("Decode"),
+              onPressed: (){
+                final json = jsonDecode(jsonString) as List<dynamic>;
+                final humans = json.map((dynamic e) => Human.fromJson(e as Map<String, dynamic>)).toList();
+                print(humans[0].name);
+              },
             ),
           ),
         ),
@@ -43,48 +76,3 @@ class Example extends StatelessWidget {
 }
 
 
-class Inherit extends InheritedWidget {
-  final Color color = Colors.indigo;
-  final double fontSize = 26;
-  final FontWeight fontWeight = FontWeight.w700;
-  const Inherit({
-    super.key,
-    required Widget child,
-  }) : super(child: child);
-
-  static Inherit of(BuildContext context) {
-    final Inherit? result = context.dependOnInheritedWidgetOfExactType<Inherit>();
-    assert(result != null, 'No Inherit found in context');
-    return result!;
-  }
-
-  @override
-  bool updateShouldNotify(Inherit old) {
-    return true;
-  }
-}
-
-
-class RedBox extends StatelessWidget {
-  const RedBox({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final store = Inherit.of(context);
-    return Container(
-      color: store.color,
-      width: 100,
-      height: 100,
-      child: FittedBox(
-        child: Text(
-          "sdfs",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: store.fontSize,
-            fontWeight: store.fontWeight,
-          ),
-        ),
-      ),
-    );
-  }
-}
