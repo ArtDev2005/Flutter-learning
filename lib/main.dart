@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'addresses.dart';
+
+part 'main.g.dart';
 
 const jsonString = '''
   [
@@ -23,6 +26,30 @@ const jsonString = '''
   ]
 ''';
 
+List<Human> humans = [
+  Human(
+    name: "Artem",
+    surname: "Petrov",
+    age: 18,
+    addresses: [
+      Address(city: "Moscow", street: "Bauman", house: "12a", flat: 8),
+      Address(city: "Cherepovez", street: "Pushkin", house: "49", flat: 20),
+      Address(city: "Moscow", street: "Gogol", house: "8", flat: 1),
+    ]
+  ),
+  Human(
+      name: "Victor",
+      surname: "Ivanov",
+      age: 18,
+      addresses: [
+        Address(city: "Moscow", street: "Bauman", house: "12a", flat: 8),
+        Address(city: "Cherepovez", street: "Pushkin", house: "49", flat: 20),
+        Address(city: "Moscow", street: "Gogol", house: "8", flat: 1),
+      ]
+  )
+];
+
+@JsonSerializable()
 class Human{
   String name;
   String surname;
@@ -36,14 +63,9 @@ class Human{
     required this.addresses,
   });
 
-  factory Human.fromJson(Map<String, dynamic> json){
-    return Human(
-      name: json["name"] as String,
-      surname: json["surname"] as String,
-      age: json["age"] as int,
-      addresses: (json["addresses"] as List<dynamic>).map((dynamic e) => Address.fromJson(e as Map<String, dynamic>)).toList(),
-    );
-  }
+  factory Human.fromJson(Map<String, dynamic> json) => _$HumanFromJson(json);
+  Map<String, dynamic> toJson() => _$HumanToJson(this);
+
 }
 
 void main(){
@@ -60,13 +82,37 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Container(
-            child: ElevatedButton(
-              child: Text("Decode"),
-              onPressed: (){
-                final json = jsonDecode(jsonString) as List<dynamic>;
-                final humans = json.map((dynamic e) => Human.fromJson(e as Map<String, dynamic>)).toList();
-                print(humans[0].name);
-              },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  child: Text("Decode"),
+                  onPressed: (){
+                    try{
+                      final json = jsonDecode(jsonString) as List<dynamic>;
+                      final humans = json.map((dynamic e) => Human.fromJson(e as Map<String, dynamic>)).toList();
+                      print(humans);
+                    }
+                    catch (error){
+                      print(error);
+                    }
+                  },
+                ),
+                SizedBox(height: 30,),
+                ElevatedButton(
+                  child: Text("Encode"),
+                  onPressed: (){
+                    try{
+                      final objs = humans.map((e) => e.toJson()).toList();
+                      final jsonString = jsonEncode(objs);
+                      print(jsonString);
+                    }
+                    catch (error){
+                      print(error);
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ),
